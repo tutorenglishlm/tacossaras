@@ -1,0 +1,40 @@
+{
+  "name": "Tacos Sara's – Los de Birria",
+  "short_name": "Tacos Sara's",
+  "description": "Birria artesanal en Mochicahui, Sinaloa. Ordena por WhatsApp.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#080005",
+  "theme_color": "#080005",
+  "orientation": "portrait-primary",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "./Logo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./Logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["food", "shopping"],
+  "shortcuts": [
+    {
+      "name": "Ver Menú",
+      "short_name": "Menú",
+      "url": "/?page=menu",
+      "description": "Ver nuestro menú de birria"
+    },
+    {
+      "name": "Cómo llegar",
+      "short_name": "Ubicación",
+      "url": "/?page=contacto",
+      "description": "Cómo llegar a Tacos Sara's"
+    }
+  ]
+}

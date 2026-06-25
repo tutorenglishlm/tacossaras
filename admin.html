@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Admin – Tacos Sara's</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Paytone+One&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+:root{
+  --pink:#C8526A;--pink-l:#E07080;--pink-d:#A03A50;
+  --yellow:#D4883A;--dark:#1A0A0E;--dark-2:#231015;
+  --white:#fff;--cream:#FFF8F5;--cream-2:#FFE9E2;
+  --text:#2D1018;--muted:rgba(45,16,24,.5);
+  --border:rgba(200,82,106,.18);--border-h:rgba(200,82,106,.35);
+  --r:12px;--ease:.3s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Poppins',sans-serif;background:var(--cream);color:var(--text);min-height:100vh}
+input,textarea,select{font-family:'Poppins',sans-serif}
+
+/* ─── LOGIN ─── */
+#loginScreen{position:fixed;inset:0;z-index:500;background:var(--dark);display:flex;align-items:center;justify-content:center}
+.login-box{background:rgba(255,255,255,.04);border:1px solid rgba(233,30,140,.25);border-radius:24px;padding:48px;width:100%;max-width:380px;text-align:center;backdrop-filter:blur(10px)}
+.login-logo{height:80px;margin:0 auto 20px;display:block;object-fit:contain}
+.login-logo-txt{font-family:'Paytone One',sans-serif;font-size:1.8rem;color:#fff;margin-bottom:4px}
+.login-logo-txt span{color:var(--pink)}
+.login-sub{font-size:.78rem;color:rgba(255,255,255,.45);letter-spacing:.15em;text-transform:uppercase;margin-bottom:32px}
+.login-input{width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(233,30,140,.2);border-radius:10px;padding:13px 16px;font-size:.88rem;color:#fff;outline:none;transition:border-color var(--ease);margin-bottom:12px}
+.login-input:focus{border-color:var(--pink)}
+.login-input.err{border-color:#E53935;animation:shake .3s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.login-btn{width:100%;padding:14px;background:var(--pink);color:#fff;border:none;border-radius:10px;font-family:'Poppins',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:background var(--ease),transform var(--ease);margin-bottom:12px}
+.login-btn:hover{background:var(--pink-l);transform:translateY(-1px)}
+.login-hint{font-size:.72rem;color:rgba(255,255,255,.3)}
+.login-err{color:#FF5252;font-size:.78rem;margin-bottom:10px;min-height:18px}
+
+/* ─── LAYOUT ─── */
+#app{display:grid;grid-template-columns:260px 1fr;min-height:100vh;display:none}
+
+/* ─── SIDEBAR ─── */
+.sidebar{background:var(--dark);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sb-header{padding:28px 24px 20px;border-bottom:1px solid rgba(233,30,140,.12)}
+.sb-logo{height:52px;object-fit:contain;display:block;margin-bottom:8px}
+.sb-logo-txt{font-family:'Paytone One',sans-serif;font-size:1.1rem;color:#fff}
+.sb-logo-txt span{color:var(--pink)}
+.sb-badge{display:inline-block;background:rgba(233,30,140,.15);color:var(--pink);font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:50px;margin-top:6px}
+.sb-nav{flex:1;padding:16px 12px}
+.sb-nav a{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;color:rgba(255,255,255,.55);font-size:.84rem;font-weight:500;cursor:pointer;transition:all var(--ease);text-decoration:none;margin-bottom:4px;border:1px solid transparent}
+.sb-nav a:hover{background:rgba(233,30,140,.08);color:#fff;border-color:var(--border)}
+.sb-nav a.active{background:rgba(233,30,140,.12);color:var(--pink);border-color:rgba(233,30,140,.25)}
+.sb-nav a i{width:18px;text-align:center;font-size:.9rem}
+.sb-footer{padding:16px 12px;border-top:1px solid rgba(233,30,140,.1)}
+.btn-save{width:100%;padding:13px;background:var(--pink);color:#fff;border:none;border-radius:10px;font-family:'Poppins',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:background var(--ease),transform var(--ease);display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px}
+.btn-save:hover{background:var(--pink-l);transform:translateY(-1px)}
+.btn-save.saving{background:var(--pink-d);pointer-events:none}
+.link-site{display:flex;align-items:center;justify-content:center;gap:7px;color:rgba(255,255,255,.4);font-size:.75rem;padding:8px;border-radius:8px;transition:color var(--ease);text-decoration:none;cursor:pointer}
+.link-site:hover{color:var(--pink)}
+.btn-logout{display:flex;align-items:center;gap:7px;color:rgba(255,255,255,.3);font-size:.75rem;padding:8px;border-radius:8px;transition:color var(--ease);background:none;border:none;cursor:pointer;font-family:'Poppins',sans-serif;width:100%}
+.btn-logout:hover{color:#FF5252}
+
+/* ─── MAIN ─── */
+.main{background:var(--cream);overflow-y:auto}
+.main-head{background:var(--white);border-bottom:1.5px solid var(--border);padding:20px 36px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.main-head h1{font-family:'Paytone One',sans-serif;font-size:1.4rem;color:var(--text)}
+.main-head h1 span{color:var(--pink)}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;padding:12px 24px;border-radius:50px;font-size:.82rem;font-weight:600;opacity:0;pointer-events:none;transition:opacity .3s;z-index:999;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.toast.show{opacity:1}
+.toast.green{background:#2e7d32}
+.toast.red{background:#c62828}
+.main-content{padding:32px 36px;max-width:1000px}
+
+/* ─── SECTIONS ─── */
+.admin-sec{display:none}
+.admin-sec.active{display:block}
+.sec-title{font-family:'Paytone One',sans-serif;font-size:1.3rem;color:var(--text);margin-bottom:6px}
+.sec-title span{color:var(--pink)}
+.sec-desc{font-size:.82rem;color:var(--muted);margin-bottom:28px}
+
+/* ─── CARDS ─── */
+.card{background:var(--white);border-radius:16px;border:1.5px solid var(--border);padding:24px;margin-bottom:20px}
+.card-title{font-size:.88rem;font-weight:700;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-title i{color:var(--pink)}
+
+/* ─── FORM ─── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group.full{grid-column:1/-1}
+.form-label{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.form-input,.form-textarea,.form-select{border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:.84rem;color:var(--text);background:var(--cream);outline:none;transition:border-color var(--ease);font-family:'Poppins',sans-serif;width:100%}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--pink)}
+.form-textarea{resize:vertical;min-height:80px}
+.form-select{cursor:pointer}
+.form-hint{font-size:.68rem;color:var(--muted)}
+.img-preview{width:100%;aspect-ratio:16/9;border-radius:8px;object-fit:cover;margin-top:8px;border:1px solid var(--border);background:var(--cream-2);display:block;min-height:80px}
+.preview-wrap{position:relative}
+.preview-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--muted);pointer-events:none}
+
+/* ─── MENU ITEMS ─── */
+.menu-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.btn-add{background:var(--pink);color:#fff;border:none;border-radius:8px;padding:10px 18px;font-family:'Poppins',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;transition:background var(--ease),transform var(--ease)}
+.btn-add:hover{background:var(--pink-l);transform:translateY(-1px)}
+.filter-tabs{display:flex;gap:6px}
+.ftab{padding:7px 14px;border-radius:50px;border:1.5px solid var(--border);background:transparent;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;color:var(--muted);transition:all var(--ease)}
+.ftab.active{background:var(--pink);border-color:var(--pink);color:#fff}
+.item-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.item-card{background:var(--white);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;transition:border-color var(--ease),transform var(--ease)}
+.item-card:hover{border-color:var(--pink-l);transform:translateY(-2px)}
+.item-photo{width:100%;aspect-ratio:16/9;object-fit:cover;background:var(--cream-2);display:block}
+.item-photo-placeholder{width:100%;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;font-size:3rem;background:var(--cream-2)}
+.item-body{padding:14px}
+.item-name{font-weight:700;font-size:.9rem;color:var(--text);margin-bottom:3px}
+.item-cat{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--pink);margin-bottom:4px}
+.item-price{font-family:'Paytone One',sans-serif;font-size:1.1rem;color:var(--pink);margin-bottom:10px}
+.item-actions{display:flex;gap:8px}
+.btn-edit{flex:1;padding:8px;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--text);font-size:.75rem;font-weight:600;cursor:pointer;transition:all var(--ease);font-family:'Poppins',sans-serif;display:flex;align-items:center;justify-content:center;gap:5px}
+.btn-edit:hover{border-color:var(--pink);color:var(--pink)}
+.btn-del{padding:8px 12px;border:none;border-radius:8px;background:rgba(229,57,53,.08);color:#E53935;font-size:.75rem;cursor:pointer;transition:background var(--ease);font-family:'Poppins',sans-serif}
+.btn-del:hover{background:rgba(229,57,53,.15)}
+.avail-toggle{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.toggle{position:relative;width:36px;height:20px;cursor:pointer}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-track{position:absolute;inset:0;background:#ccc;border-radius:20px;transition:background var(--ease)}
+.toggle input:checked~.toggle-track{background:var(--pink)}
+.toggle-thumb{position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform var(--ease)}
+.toggle input:checked~.toggle-thumb{transform:translateX(16px)}
+.avail-lbl{font-size:.75rem;font-weight:600;color:var(--muted)}
+
+/* ─── MODAL ─── */
+.modal-bg{position:fixed;inset:0;z-index:400;background:rgba(8,0,5,.65);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px}
+.modal-bg.open{display:flex}
+.modal{background:var(--white);border-radius:20px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 30px 80px rgba(233,30,140,.25)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1.5px solid var(--border);position:sticky;top:0;background:var(--white);z-index:1}
+.modal-head h2{font-family:'Paytone One',sans-serif;font-size:1.2rem;color:var(--text)}
+.modal-head h2 span{color:var(--pink)}
+.modal-close{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text);font-size:.85rem;transition:all var(--ease)}
+.modal-close:hover{background:var(--pink);border-color:var(--pink);color:#fff}
+.modal-body{padding:24px}
+.modal-form{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.modal-form .full{grid-column:1/-1}
+.modal-footer{padding:16px 24px;border-top:1.5px solid var(--border);display:flex;gap:10px;justify-content:flex-end;position:sticky;bottom:0;background:var(--white)}
+.btn-cancel{padding:10px 20px;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--text);font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all var(--ease)}
+.btn-cancel:hover{background:var(--cream-2)}
+.btn-confirm{padding:10px 24px;border:none;border-radius:8px;background:var(--pink);color:#fff;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;transition:background var(--ease)}
+.btn-confirm:hover{background:var(--pink-l)}
+
+/* ─── UPLOAD BUTTON ─── */
+.upload-row{display:flex;align-items:center;gap:8px;margin-top:6px}
+.btn-upload{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;border:1.5px dashed var(--pink);background:rgba(233,30,140,.05);color:var(--pink);font-family:'Poppins',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer;transition:all var(--ease);white-space:nowrap}
+.btn-upload:hover{background:rgba(233,30,140,.12);border-style:solid}
+.upload-hint{font-size:.68rem;color:var(--muted)}
+
+/* ─── IMAGE PREVIEW GRID ─── */
+.img-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.img-block{border:1.5px solid var(--border);border-radius:12px;padding:14px;background:var(--white)}
+.img-block label{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px}
+.img-prev{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;border:1px solid var(--border);background:var(--cream-2);display:block;margin-top:8px}
+.step-lbl-input{margin-top:6px;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-size:.75rem;font-family:'Poppins',sans-serif;color:var(--text);background:var(--cream);width:100%;outline:none;transition:border-color var(--ease)}
+.step-lbl-input:focus{border-color:var(--pink)}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:768px){
+  #app{grid-template-columns:1fr}
+  .sidebar{position:relative;height:auto;flex-direction:row;flex-wrap:wrap}
+  .sb-nav{display:flex;gap:4px;padding:10px 12px;width:100%;overflow-x:auto}
+  .main-content{padding:20px 16px}
+  .form-grid,.modal-form{grid-template-columns:1fr}
+  .form-group.full,.modal-form .full{grid-column:1}
+}
+</style>
+</head>
+<body>
+
+<!-- ─── LOGIN ─── -->
+<div id="loginScreen">
+  <div class="login-box">
+    <img src="./Logo.jpg" alt="Tacos Sara's" class="login-logo" onerror="this.style.display='none'"/>
+    <div class="login-logo-txt">Tacos <span>Sara's</span></div>
+    <div class="login-sub">Panel de administración</div>
+    <div class="login-err" id="loginErr"></div>
+    <input id="pwInput" class="login-input" type="password" placeholder="Contraseña" autocomplete="current-password"
+      onkeydown="if(event.key==='Enter') doLogin()"/>
+    <button class="login-btn" onclick="doLogin()"><i class="fa-solid fa-right-to-bracket"></i> Entrar</button>
+    <div class="login-hint">Contraseña por defecto: <strong>saras2026</strong></div>
+  </div>
+</div>
+
+<!-- ─── APP ─── -->
+<div id="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sb-header">
+      <img src="./Logo.jpg" alt="Logo" class="sb-logo" onerror="this.style.display='none'"/>
+      <div class="sb-logo-txt">Tacos <span>Sara's</span></div>
+      <div class="sb-badge"><i class="fa-solid fa-shield-halved"></i> Admin</div>
+    </div>
+    <nav class="sb-nav">
+      <a onclick="showSec('menu')" class="active" id="nav-menu"><i class="fa-solid fa-utensils"></i> Menú</a>
+      <a onclick="showSec('info')" id="nav-info"><i class="fa-solid fa-store"></i> Restaurante</a>
+      <a onclick="showSec('images')" id="nav-images"><i class="fa-solid fa-images"></i> Imágenes</a>
+      <a onclick="showSec('settings')" id="nav-settings"><i class="fa-solid fa-gear"></i> Configuración</a>
+    </nav>
+    <div class="sb-footer">
+      <button class="btn-save" id="saveBtn" onclick="saveAll()"><i class="fa-solid fa-floppy-disk"></i> Guardar cambios</button>
+      <a href="./index.html" target="_blank" class="link-site"><i class="fa-solid fa-arrow-up-right-from-square"></i> Ver sitio</a>
+      <button class="btn-logout" onclick="doLogout()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="main-head">
+      <h1 id="mainHeadTitle">Gestión de <span>Menú</span></h1>
+      <div style="font-size:.75rem;color:var(--muted)">Los cambios se guardan al presionar "Guardar cambios"</div>
+    </div>
+    <div class="main-content">
+
+      <!-- ── MENU SECTION ── -->
+      <div class="admin-sec active" id="sec-menu">
+        <div class="sec-title">Menú <span>Tacos Sara's</span></div>
+        <p class="sec-desc">Agrega, edita o elimina platillos. Activa/desactiva disponibilidad sin borrar el elemento.</p>
+        <div class="menu-toolbar">
+          <div class="filter-tabs" id="filterTabs">
+            <button class="ftab active" data-f="all" onclick="filterItems('all',this)">Todos</button>
+            <button class="ftab" data-f="birria" onclick="filterItems('birria',this)">🔥 Birria</button>
+            <button class="ftab" data-f="tacos" onclick="filterItems('tacos',this)">🌮 Tacos</button>
+            <button class="ftab" data-f="bebidas" onclick="filterItems('bebidas',this)">🥤 Bebidas</button>
+            <button class="ftab" data-f="postres" onclick="filterItems('postres',this)">🍮 Postres</button>
+          </div>
+          <button class="btn-add" onclick="openModal()"><i class="fa-solid fa-plus"></i> Nuevo platillo</button>
+        </div>
+        <div class="item-grid" id="itemGrid"></div>
+      </div>
+
+      <!-- ── INFO SECTION ── -->
+      <div class="admin-sec" id="sec-info">
+        <div class="sec-title">Información del <span>Restaurante</span></div>
+        <p class="sec-desc">Actualiza los textos e información de contacto que aparecen en el sitio.</p>
+
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-file-lines"></i> Textos principales</div>
+          <div class="form-grid">
+            <div class="form-group full">
+              <label class="form-label">Subtítulo del Hero</label>
+              <textarea class="form-textarea" id="inf-heroSub" rows="2"></textarea>
+            </div>
+            <div class="form-group full">
+              <label class="form-label">Título — Sección Nosotros</label>
+              <input class="form-input" id="inf-nosTitle" type="text"/>
+            </div>
+            <div class="form-group full">
+              <label class="form-label">Texto — Sección Nosotros</label>
+              <textarea class="form-textarea" id="inf-nosText" rows="4"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-location-dot"></i> Contacto</div>
+          <div class="form-grid">
+            <div class="form-group full">
+              <label class="form-label">Dirección</label>
+              <textarea class="form-textarea" id="inf-address" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Teléfono (mostrar)</label>
+              <input class="form-input" id="inf-phone" type="tel"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">WhatsApp (código país sin +)</label>
+              <input class="form-input" id="inf-whatsapp" type="tel" placeholder="526682100504"/>
+              <span class="form-hint">Incluye código de país: 52 para México</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Horario</label>
+              <input class="form-input" id="inf-hours" type="text"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Precio estimado</label>
+              <input class="form-input" id="inf-priceRange" type="text"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-share-nodes"></i> Redes sociales</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Instagram (URL completa)</label>
+              <input class="form-input" id="inf-instagram" type="url"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Facebook (URL completa)</label>
+              <input class="form-input" id="inf-facebook" type="url"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-fire-flame-curved"></i> Características (Sección Nosotros)</div>
+          <div id="featuresEditor"></div>
+          <button class="btn-add" style="margin-top:12px" onclick="addFeature()"><i class="fa-solid fa-plus"></i> Agregar característica</button>
+        </div>
+      </div>
+
+      <!-- ── IMAGES SECTION ── -->
+      <div class="admin-sec" id="sec-images">
+        <div class="sec-title">Galería de <span>Imágenes</span></div>
+        <p class="sec-desc">Pega URLs de imágenes (Pexels, Unsplash, tu propio servidor). Los cambios se ven al guardar.</p>
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-camera"></i> Foto — Sección Nosotros</div>
+          <div class="form-group">
+            <label class="form-label">Imagen — Nosotros</label>
+            <div class="upload-row">
+              <input class="form-input" id="img-about" type="url" placeholder="https://..." oninput="prevImg('img-about','prev-about')" style="flex:1"/>
+              <label class="btn-upload"><i class="fa-solid fa-arrow-up-from-bracket"></i> Subir <input type="file" accept="image/*" style="display:none" onchange="uploadImg(this,'img-about','prev-about')"/></label>
+            </div>
+            <img class="img-prev" id="prev-about" src="" onerror="this.style.opacity='.2'" alt="Preview"/>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-photo-film"></i> Fotos del Hero — Slideshow</div>
+          <p style="font-size:.78rem;color:var(--muted);margin-bottom:16px">Agrega todas las fotos que quieras para el slideshow del hero. Sin límite.</p>
+          <div id="slidesEditor"></div>
+          <button class="btn-add" style="margin-top:14px" onclick="addSlide()"><i class="fa-solid fa-plus"></i> Agregar foto al slideshow</button>
+        </div>
+      </div>
+
+      <!-- ── SETTINGS SECTION ── -->
+      <div class="admin-sec" id="sec-settings">
+        <div class="sec-title">Configuración <span>General</span></div>
+        <p class="sec-desc">Cambia la contraseña de acceso al admin y otras configuraciones.</p>
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-key"></i> Cambiar contraseña</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Contraseña actual</label>
+              <input class="form-input" id="pw-current" type="password"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nueva contraseña</label>
+              <input class="form-input" id="pw-new" type="password"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirmar nueva contraseña</label>
+              <input class="form-input" id="pw-confirm" type="password"/>
+            </div>
+            <div class="form-group">
+              <button class="btn-confirm" onclick="changePassword()" style="align-self:flex-end">
+                <i class="fa-solid fa-lock"></i> Cambiar contraseña
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-trash-can" style="color:#E53935"></i> Zona de peligro</div>
+          <p style="font-size:.82rem;color:var(--muted);margin-bottom:14px">Esto borrará todos los cambios guardados y restaurará los valores por defecto. No se puede deshacer.</p>
+          <button onclick="resetData()" style="padding:10px 18px;border:1.5px solid #E53935;border-radius:8px;background:transparent;color:#E53935;font-family:'Poppins',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:7px"
+            onmouseover="this.style.background='rgba(229,57,53,.08)'" onmouseout="this.style.background='transparent'">
+            <i class="fa-solid fa-rotate-left"></i> Restaurar valores por defecto
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ─── ITEM MODAL ─── -->
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this) closeModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modalTitle">Nuevo <span>platillo</span></h2>
+      <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-form">
+        <div class="form-group full">
+          <label class="form-label">Nombre del platillo *</label>
+          <input class="form-input" id="m-name" type="text" placeholder="Taco de Birria"/>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Descripción</label>
+          <textarea class="form-textarea" id="m-desc" rows="3" placeholder="Descripción breve del platillo..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Precio ($) *</label>
+          <input class="form-input" id="m-price" type="number" min="0" step="1" placeholder="35"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Categoría *</label>
+          <select class="form-select" id="m-category">
+            <option value="birria">🔥 Especialidades (Birria)</option>
+            <option value="tacos">🌮 Tacos</option>
+            <option value="bebidas">🥤 Bebidas</option>
+            <option value="postres">🍮 Postres</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Emoji</label>
+          <input class="form-input" id="m-emoji" type="text" placeholder="🌮" maxlength="4"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Badge (opcional)</label>
+          <input class="form-input" id="m-badge" type="text" placeholder="⭐ Estrella, Favorito..."/>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Imagen</label>
+          <div class="upload-row">
+            <input class="form-input" id="m-image" type="url" placeholder="https://... o sube desde tu PC" oninput="prevImg('m-image','m-img-prev')" style="flex:1"/>
+            <label class="btn-upload"><i class="fa-solid fa-arrow-up-from-bracket"></i> Subir foto <input type="file" accept="image/*" style="display:none" onchange="uploadImg(this,'m-image','m-img-prev')"/></label>
+          </div>
+          <span class="upload-hint">Pega una URL o sube una foto desde tu computadora / celular</span>
+          <img class="img-prev" id="m-img-prev" src="" onerror="this.style.opacity='.2'" alt="Preview"/>
+        </div>
+        <div class="form-group full">
+          <div class="avail-toggle">
+            <label class="toggle">
+              <input type="checkbox" id="m-available" checked/>
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+            <span class="avail-lbl">Disponible (visible en el menú)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-confirm" onclick="saveItem()"><i class="fa-solid fa-floppy-disk"></i> Guardar platillo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── TOAST ─── -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════ AUTH ══════ */
+const STORE_KEY='tacos_saras';
+
+function getStored(){
+  try{const s=localStorage.getItem(STORE_KEY);if(s)return JSON.parse(s)}catch(e){}
+  return null;
+}
+
+function getPassword(){
+  const d=getStored();
+  return (d&&d.adminPassword)||'saras2026';
+}
+
+function doLogin(){
+  const val=document.getElementById('pwInput').value;
+  const errEl=document.getElementById('loginErr');
+  if(val===getPassword()){
+    sessionStorage.setItem('admin_ok','1');
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('app').style.display='grid';
+    loadAll();
+  } else {
+    errEl.textContent='Contraseña incorrecta. Inténtalo de nuevo.';
+    const inp=document.getElementById('pwInput');
+    inp.classList.add('err');
+    setTimeout(()=>{inp.classList.remove('err');errEl.textContent=''},2000);
+  }
+}
+document.getElementById('pwInput').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+
+function doLogout(){
+  sessionStorage.removeItem('admin_ok');
+  location.reload();
+}
+
+if(sessionStorage.getItem('admin_ok')==='1'){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('app').style.display='grid';
+}
+
+/* ══════ DEFAULTS ══════ */
+const DEFAULTS={
+  restaurant:{
+    heroSub:"Birria artesanal cocinada a fuego lento con chiles y especias seleccionadas. El sabor que te hace volver.",
+    nosTitle:"Pasión por el taco,\namor por Sinaloa",
+    nosText:"En Tacos Sara's nació un sueño sencillo: servir birria artesanal de calidad con las recetas de siempre y el cariño que solo se consigue en casa. Desde el corazón de Mochicahui, llevamos sabor auténtico a cada mesa.",
+    address:"Tomás Rendón 21, Mochicahui\nCP 81890, Sinaloa, México",
+    phone:"668 210 0504",
+    whatsapp:"526682100504",
+    hours:"Lun–Dom: 8:00 am – 10:00 pm",
+    priceRange:"$100 – $200 por persona",
+    instagram:"https://www.instagram.com/tacossaras/",
+    facebook:"https://www.facebook.com/profile.php?id=61568119435030",
+    features:[
+      {icon:"fa-fire-flame-curved",title:"Birria artesanal",desc:"Cocinada lentamente con chiles guajillo, ancho y especias seleccionadas."},
+      {icon:"fa-leaf",title:"Ingredientes frescos diario",desc:"Tortillas de maíz recién hechas, cilantro, cebolla y salsas elaboradas cada mañana."},
+      {icon:"fa-heart",title:"Para comer aquí o llevar",desc:"Ambiente cálido para familias y amigos."}
+    ]
+  },
+  images:{
+    about:"https://images.pexels.com/photos/3616956/pexels-photo-3616956.jpeg?auto=compress&cs=tinysrgb&w=800",
+    slides:[
+      {url:"https://images.pexels.com/photos/4110255/pexels-photo-4110255.jpeg?auto=compress&cs=tinysrgb&w=900",label:"Chiles y especias",tag:"El secreto de la birria"},
+      {url:"https://images.pexels.com/photos/5737244/pexels-photo-5737244.jpeg?auto=compress&cs=tinysrgb&w=900",label:"Birria en cocción",tag:"Horas de fuego lento"},
+      {url:"https://images.pexels.com/photos/2092507/pexels-photo-2092507.jpeg?auto=compress&cs=tinysrgb&w=900",label:"Tacos de birria",tag:"El resultado"},
+      {url:"https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg?auto=compress&cs=tinysrgb&w=900",label:"Listos para servir 🔥",tag:"¡A tacar!"}
+    ]
+  },
+  menu:[
+    {id:"birria-taco",name:"Taco de Birria",desc:"Carne de res cocinada a fuego lento en adobo de chiles, servida en tortilla de maíz con cebolla, cilantro y consomé.",price:35,emoji:"🥘",image:"https://images.pexels.com/photos/2092507/pexels-photo-2092507.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",category:"birria",available:true,badge:"⭐ Estrella"},
+    {id:"quesabirria",name:"Quesabirria",desc:"Tortilla dorada con queso fundido y birria jugosa. Acompañada de consomé caliente.",price:45,emoji:"🧀",image:"https://images.pexels.com/photos/3956439/pexels-photo-3956439.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",category:"birria",available:true,badge:"Favorito"},
+    {id:"consome",name:"Consomé de Birria",desc:"El caldo rico y especiado donde se cuece la birria, con garbanzos, cebolla, cilantro y limón.",price:50,emoji:"🍲",image:"https://images.pexels.com/photos/1731535/pexels-photo-1731535.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",category:"birria",available:true},
+    {id:"tostada",name:"Tostada de Birria",desc:"Tostada crujiente con frijoles, birria deshebrada, crema, queso y salsa verde.",price:38,emoji:"🫓",image:"https://images.pexels.com/photos/4518670/pexels-photo-4518670.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",category:"birria",available:true},
+    {id:"pastor",name:"Taco al Pastor",desc:"Carne marinada del trompo con piña, cebolla y cilantro sobre tortilla de maíz.",price:28,emoji:"🌮",image:"https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",category:"tacos",available:true,badge:"Clásico"},
+    {id:"asada",name:"Taco de Carne Asada",desc:"Res a las brasas con guacamole, cebolla y chile toreado. Sabor intenso.",price:35,emoji:"🥩",image:"https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",category:"tacos",available:true},
+    {id:"pollo",name:"Taco de Pollo",desc:"Pollo a la plancha, jugoso y sazonado, con salsas de la casa.",price:28,emoji:"🐔",image:"https://images.pexels.com/photos/2338407/pexels-photo-2338407.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",category:"tacos",available:true},
+    {id:"carnitas",name:"Taco de Carnitas",desc:"Cerdo cocinado a la mexicana — suave, dorado y lleno de sabor.",price:30,emoji:"🐷",image:"https://images.pexels.com/photos/5737254/pexels-photo-5737254.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",category:"tacos",available:true},
+    {id:"jamaica",name:"Agua de Jamaica",desc:"Flor de jamaica preparada artesanalmente. Fría y ligeramente dulce.",price:25,emoji:"🌺",image:"https://images.pexels.com/photos/1337825/pexels-photo-1337825.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",category:"bebidas",available:true},
+    {id:"horchata",name:"Agua de Horchata",desc:"Horchata cremosa de arroz con canela. Fría y reconfortante.",price:25,emoji:"🍚",image:"https://images.pexels.com/photos/5840077/pexels-photo-5840077.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",category:"bebidas",available:true},
+    {id:"limonada",name:"Limonada Natural",desc:"Limonada fresca y natural, perfecta para el calor sinaloense.",price:22,emoji:"🍋",image:"https://images.pexels.com/photos/2109099/pexels-photo-2109099.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",category:"bebidas",available:true},
+    {id:"refresco",name:"Refresco",desc:"Coca-Cola, Pepsi, Jarritos y otras bebidas frías.",price:20,emoji:"🥤",image:"https://images.pexels.com/photos/50593/coca-cola-cold-drink-soft-drink-50593.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",category:"bebidas",available:true},
+    {id:"flan",name:"Flan Casero",desc:"Flan de vainilla preparado en casa, suave y cremoso con su caramelo dorado. El postre clásico mexicano de siempre.",price:35,emoji:"🍮",image:"https://images.pexels.com/photos/8605562/pexels-photo-8605562.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",category:"postres",available:true,badge:"Casero"},
+    {id:"arroz-leche",name:"Arroz con Leche",desc:"Arroz cremoso cocinado con leche, canela y azúcar. Servido frío, una delicia que cierra perfecto la comida.",price:30,emoji:"🍚",image:"https://images.pexels.com/photos/6880219/pexels-photo-6880219.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",category:"postres",available:true},
+    {id:"churros",name:"Churros con Cajeta",desc:"Churros crujientes por fuera, suaves por dentro, bañados en cajeta de leche de cabra. Una tentación irresistible.",price:40,emoji:"🥐",image:"https://images.pexels.com/photos/3026804/pexels-photo-3026804.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",category:"postres",available:true,badge:"Favorito"},
+    {id:"gelatina",name:"Gelatina de Leche",desc:"Gelatina cremosa de leche con rompope, fácil y refrescante. El postre ligero perfecto para el calor de Sinaloa.",price:25,emoji:"🍧",image:"https://images.pexels.com/photos/5966437/pexels-photo-5966437.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",category:"postres",available:true}
+  ],
+  adminPassword:"saras2026"
+};
+
+/* ══════ DATA ══════ */
+let DATA=JSON.parse(JSON.stringify(DEFAULTS));
+
+function loadAll(){
+  const stored=getStored();
+  if(stored) DATA=stored;
+  else DATA=JSON.parse(JSON.stringify(DEFAULTS));
+  loadInfo();
+  loadImages();
+  loadFeatures();
+  renderItemGrid('all');
+}
+
+/* ══════ NAV ══════ */
+const SEC_TITLES={menu:'Gestión de <span>Menú</span>',info:'Información del <span>Restaurante</span>',images:'Galería de <span>Imágenes</span>',settings:'<span>Configuración</span> General'};
+function showSec(name){
+  document.querySelectorAll('.admin-sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.sb-nav a').forEach(a=>a.classList.remove('active'));
+  document.getElementById('sec-'+name).classList.add('active');
+  document.getElementById('nav-'+name).classList.add('active');
+  document.getElementById('mainHeadTitle').innerHTML=SEC_TITLES[name]||name;
+}
+
+/* ══════ MENU ITEMS ══════ */
+let currentFilter='all';
+let editingId=null;
+
+function renderItemGrid(filter){
+  currentFilter=filter;
+  const items=DATA.menu||[];
+  const filtered=filter==='all'?items:items.filter(i=>i.category===filter);
+  const grid=document.getElementById('itemGrid');
+  grid.innerHTML=filtered.map(item=>`
+    <div class="item-card" id="card-${item.id}">
+      ${item.image
+        ?`<img class="item-photo" src="${item.image}" alt="${item.name}" onerror="this.style.opacity='.2'"/>`
+        :`<div class="item-photo-placeholder">${item.emoji||'🌮'}</div>`}
+      <div class="item-body">
+        <div class="item-cat">${{birria:'🔥 Especialidades',tacos:'🌮 Tacos',bebidas:'🥤 Bebidas',postres:'🍮 Postres'}[item.category]||item.category}</div>
+        <div class="item-name">${item.emoji||''} ${item.name}</div>
+        <div class="item-price">$${item.price}</div>
+        <div class="avail-toggle">
+          <label class="toggle">
+            <input type="checkbox" ${item.available!==false?'checked':''} onchange="toggleAvail('${item.id}',this.checked)"/>
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+          <span class="avail-lbl">${item.available!==false?'Disponible':'No disponible'}</span>
+        </div>
+        <div class="item-actions">
+          <button class="btn-edit" onclick="openModal('${item.id}')"><i class="fa-solid fa-pen"></i> Editar</button>
+          <button class="btn-del" onclick="deleteItem('${item.id}')"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </div>
+    </div>`).join('')||'<p style="color:var(--muted);font-size:.85rem;padding:20px">No hay platillos en esta categoría.</p>';
+}
+
+function filterItems(f,btn){
+  document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderItemGrid(f);
+}
+
+function toggleAvail(id,val){
+  const idx=DATA.menu.findIndex(i=>i.id===id);
+  if(idx>-1){DATA.menu[idx].available=val;showToast(val?'Platillo marcado como disponible':'Platillo marcado como no disponible')}
+}
+
+function deleteItem(id){
+  if(!confirm('¿Eliminar este platillo? Esta acción no se puede deshacer.')) return;
+  DATA.menu=DATA.menu.filter(i=>i.id!==id);
+  renderItemGrid(currentFilter);
+  showToast('Platillo eliminado','red');
+}
+
+/* ══════ MODAL ══════ */
+function openModal(id){
+  editingId=id||null;
+  const item=id?DATA.menu.find(i=>i.id===id):null;
+  document.getElementById('modalTitle').innerHTML=id?`Editar <span>platillo</span>`:`Nuevo <span>platillo</span>`;
+  document.getElementById('m-name').value=item?.name||'';
+  document.getElementById('m-desc').value=item?.desc||'';
+  document.getElementById('m-price').value=item?.price||'';
+  document.getElementById('m-category').value=item?.category||'birria';
+  document.getElementById('m-emoji').value=item?.emoji||'';
+  document.getElementById('m-badge').value=item?.badge||'';
+  document.getElementById('m-image').value=item?.image||'';
+  document.getElementById('m-available').checked=item?.available!==false;
+  const prev=document.getElementById('m-img-prev');
+  prev.src=item?.image||''; prev.style.opacity='1';
+  document.getElementById('modalBg').classList.add('open');
+}
+
+function closeModal(){document.getElementById('modalBg').classList.remove('open');editingId=null}
+
+function saveItem(){
+  const name=document.getElementById('m-name').value.trim();
+  const price=parseFloat(document.getElementById('m-price').value);
+  if(!name){document.getElementById('m-name').style.borderColor='#E53935';setTimeout(()=>document.getElementById('m-name').style.borderColor='',1500);return}
+  if(isNaN(price)||price<0){document.getElementById('m-price').style.borderColor='#E53935';setTimeout(()=>document.getElementById('m-price').style.borderColor='',1500);return}
+  const item={
+    id:editingId||('item-'+Date.now()),
+    name,
+    desc:document.getElementById('m-desc').value.trim(),
+    price,
+    category:document.getElementById('m-category').value,
+    emoji:document.getElementById('m-emoji').value.trim(),
+    badge:document.getElementById('m-badge').value.trim(),
+    image:document.getElementById('m-image').value.trim(),
+    available:document.getElementById('m-available').checked
+  };
+  if(editingId){
+    const idx=DATA.menu.findIndex(i=>i.id===editingId);
+    if(idx>-1) DATA.menu[idx]=item;
+  } else {
+    DATA.menu.push(item);
+  }
+  closeModal();
+  renderItemGrid(currentFilter);
+  showToast(editingId?'Platillo actualizado':'Platillo agregado ✓');
+}
+
+/* ══════ INFO ══════ */
+function loadInfo(){
+  const r=DATA.restaurant||{};
+  document.getElementById('inf-heroSub').value=r.heroSub||DEFAULTS.restaurant.heroSub;
+  document.getElementById('inf-nosTitle').value=r.nosTitle||DEFAULTS.restaurant.nosTitle;
+  document.getElementById('inf-nosText').value=r.nosText||DEFAULTS.restaurant.nosText;
+  document.getElementById('inf-address').value=r.address||DEFAULTS.restaurant.address;
+  document.getElementById('inf-phone').value=r.phone||DEFAULTS.restaurant.phone;
+  document.getElementById('inf-whatsapp').value=r.whatsapp||DEFAULTS.restaurant.whatsapp;
+  document.getElementById('inf-hours').value=r.hours||DEFAULTS.restaurant.hours;
+  document.getElementById('inf-priceRange').value=r.priceRange||DEFAULTS.restaurant.priceRange;
+  document.getElementById('inf-instagram').value=r.instagram||DEFAULTS.restaurant.instagram;
+  document.getElementById('inf-facebook').value=r.facebook||DEFAULTS.restaurant.facebook;
+}
+
+function collectInfo(){
+  DATA.restaurant={
+    ...DATA.restaurant,
+    heroSub:document.getElementById('inf-heroSub').value,
+    nosTitle:document.getElementById('inf-nosTitle').value,
+    nosText:document.getElementById('inf-nosText').value,
+    address:document.getElementById('inf-address').value,
+    phone:document.getElementById('inf-phone').value,
+    whatsapp:document.getElementById('inf-whatsapp').value,
+    hours:document.getElementById('inf-hours').value,
+    priceRange:document.getElementById('inf-priceRange').value,
+    instagram:document.getElementById('inf-instagram').value,
+    facebook:document.getElementById('inf-facebook').value,
+    features:collectFeatures()
+  };
+}
+
+/* ══════ FEATURES ══════ */
+const ICONS=['fa-fire-flame-curved','fa-leaf','fa-heart','fa-star','fa-utensils','fa-clock','fa-map-marker-alt','fa-phone','fa-check-circle'];
+function loadFeatures(){
+  const feats=(DATA.restaurant?.features)||DEFAULTS.restaurant.features;
+  renderFeatures(feats);
+}
+function renderFeatures(feats){
+  document.getElementById('featuresEditor').innerHTML=feats.map((f,i)=>`
+    <div class="card" style="margin-bottom:10px" data-fi="${i}">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <span style="font-size:1.2rem;color:var(--pink)"><i class="fa-solid ${f.icon}"></i></span>
+        <strong style="font-size:.85rem;color:var(--text)">${f.title}</strong>
+        <button onclick="removeFeat(${i})" style="margin-left:auto;border:none;background:transparent;cursor:pointer;color:#E53935;font-size:.8rem"><i class="fa-solid fa-trash"></i></button>
+      </div>
+      <div class="form-grid" style="gap:10px">
+        <div class="form-group">
+          <label class="form-label">Ícono (FA class)</label>
+          <select class="form-select" id="feat-icon-${i}">
+            ${ICONS.map(ic=>`<option value="${ic}" ${f.icon===ic?'selected':''}>${ic.replace('fa-','')}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Título</label>
+          <input class="form-input" id="feat-title-${i}" value="${f.title}"/>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Descripción</label>
+          <input class="form-input" id="feat-desc-${i}" value="${f.desc}"/>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function collectFeatures(){
+  const cards=document.querySelectorAll('#featuresEditor [data-fi]');
+  return [...cards].map(c=>{
+    const i=c.dataset.fi;
+    return {icon:document.getElementById('feat-icon-'+i)?.value||'fa-star',title:document.getElementById('feat-title-'+i)?.value||'',desc:document.getElementById('feat-desc-'+i)?.value||''};
+  });
+}
+function addFeature(){
+  const feats=collectFeatures();
+  feats.push({icon:'fa-star',title:'Nueva característica',desc:'Descripción de la característica'});
+  renderFeatures(feats);
+}
+function removeFeat(i){
+  const feats=collectFeatures();
+  feats.splice(i,1);
+  renderFeatures(feats);
+}
+
+/* ══════ IMAGES ══════ */
+function loadImages(){
+  const img=DATA.images||{};
+  const aboutUrl=img.about||DEFAULTS.images.about;
+  document.getElementById('img-about').value=aboutUrl;
+  const pAbout=document.getElementById('prev-about');
+  if(pAbout){pAbout.src=aboutUrl;pAbout.style.opacity='1'}
+  const slides=img.slides&&img.slides.length?img.slides:DEFAULTS.images.slides;
+  renderSlides(slides);
+}
+function prevImg(inputId,prevId){
+  const url=document.getElementById(inputId).value.trim();
+  const p=document.getElementById(prevId);
+  if(p){p.src=url;p.style.opacity='1'}
+}
+function uploadImg(input,inputId,prevId){
+  const file=input.files[0];if(!file)return;
+  if(file.size>4*1024*1024){showToast('La imagen es muy grande (máx 4 MB). Comprime la foto antes de subir.','red');return}
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const data=e.target.result;
+    const inp=document.getElementById(inputId);
+    if(inp) inp.value=data;
+    const p=document.getElementById(prevId);
+    if(p){p.src=data;p.style.opacity='1'}
+  };
+  reader.readAsDataURL(file);
+}
+function renderSlides(slides){
+  document.getElementById('slidesEditor').innerHTML=slides.map((s,i)=>`
+    <div class="img-block" style="margin-bottom:14px;padding:16px;position:relative" data-si="${i}">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <span style="font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--pink)"><i class="fa-solid fa-image"></i> Foto ${i+1}</span>
+        <button onclick="removeSlide(${i})" title="Eliminar foto" style="border:none;background:rgba(229,57,53,.08);cursor:pointer;color:#E53935;font-size:.75rem;font-weight:600;padding:5px 10px;border-radius:6px;display:flex;align-items:center;gap:5px;transition:background .2s" onmouseover="this.style.background='rgba(229,57,53,.18)'" onmouseout="this.style.background='rgba(229,57,53,.08)'"><i class="fa-solid fa-trash"></i> Eliminar</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">URL de la imagen</label>
+        <div class="upload-row">
+          <input class="form-input" id="slide-url-${i}" type="url" value="${s.url||''}" placeholder="https://... o sube desde tu PC" oninput="prevSlide(${i})" style="flex:1"/>
+          <label class="btn-upload"><i class="fa-solid fa-arrow-up-from-bracket"></i> Subir <input type="file" accept="image/*" style="display:none" onchange="uploadImg(this,'slide-url-${i}','slide-prev-${i}')"/></label>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
+        <div class="form-group">
+          <label class="form-label">Nombre / etiqueta</label>
+          <input class="form-input" id="slide-label-${i}" type="text" value="${s.label||''}" placeholder="Ej: Birria en cocción"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Texto pequeño (arriba)</label>
+          <input class="form-input" id="slide-tag-${i}" type="text" value="${s.tag||''}" placeholder="Ej: Horas de fuego lento"/>
+        </div>
+      </div>
+      <img class="img-prev" id="slide-prev-${i}" src="${s.url||''}" onerror="this.style.opacity='.15'" alt="Preview" style="margin-top:10px"/>
+    </div>`).join('');
+}
+function prevSlide(i){
+  const url=document.getElementById('slide-url-'+i).value.trim();
+  const p=document.getElementById('slide-prev-'+i);
+  if(p){p.src=url;p.style.opacity='1'}
+}
+function collectSlides(){
+  return [...document.querySelectorAll('#slidesEditor [data-si]')].map(b=>{
+    const i=b.dataset.si;
+    return{url:document.getElementById('slide-url-'+i)?.value.trim()||'',label:document.getElementById('slide-label-'+i)?.value.trim()||'',tag:document.getElementById('slide-tag-'+i)?.value.trim()||''};
+  });
+}
+function addSlide(){
+  const slides=collectSlides();
+  slides.push({url:'',label:'Nueva foto',tag:''});
+  renderSlides(slides);
+  setTimeout(()=>document.getElementById('slide-url-'+(slides.length-1))?.focus(),50);
+}
+function removeSlide(i){
+  const slides=collectSlides();
+  if(slides.length<=1){showToast('Necesitas al menos una foto en el slideshow','red');return}
+  slides.splice(i,1);
+  renderSlides(slides);
+}
+function collectImages(){
+  DATA.images={
+    about:document.getElementById('img-about').value.trim(),
+    slides:collectSlides()
+  };
+}
+
+/* ══════ SAVE ══════ */
+function saveAll(){
+  const btn=document.getElementById('saveBtn');
+  btn.classList.add('saving');
+  btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
+  collectInfo();
+  collectImages();
+  localStorage.setItem(STORE_KEY,JSON.stringify(DATA));
+  setTimeout(()=>{
+    btn.classList.remove('saving');
+    btn.innerHTML='<i class="fa-solid fa-floppy-disk"></i> Guardar cambios';
+    showToast('✓ Cambios guardados. El sitio ya está actualizado.','green');
+  },600);
+}
+
+/* ══════ SETTINGS ══════ */
+function changePassword(){
+  const cur=document.getElementById('pw-current').value;
+  const nw=document.getElementById('pw-new').value;
+  const cf=document.getElementById('pw-confirm').value;
+  if(cur!==getPassword()){showToast('La contraseña actual es incorrecta','red');return}
+  if(nw.length<4){showToast('La nueva contraseña debe tener al menos 4 caracteres','red');return}
+  if(nw!==cf){showToast('Las contraseñas no coinciden','red');return}
+  DATA.adminPassword=nw;
+  localStorage.setItem(STORE_KEY,JSON.stringify(DATA));
+  document.getElementById('pw-current').value='';
+  document.getElementById('pw-new').value='';
+  document.getElementById('pw-confirm').value='';
+  showToast('✓ Contraseña actualizada','green');
+}
+
+function resetData(){
+  if(!confirm('¿Seguro que quieres restaurar todos los valores por defecto? Se perderán todos los cambios guardados.')) return;
+  localStorage.removeItem(STORE_KEY);
+  DATA=JSON.parse(JSON.stringify(DEFAULTS));
+  loadAll();
+  showToast('Datos restaurados a los valores por defecto');
+}
+
+/* ══════ TOAST ══════ */
+let toastTimer;
+function showToast(msg,type=''){
+  const el=document.getElementById('toast');
+  el.textContent=msg;
+  el.className='toast'+(type?' '+type:'');
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),3000);
+}
+
+/* Init if already logged in */
+if(sessionStorage.getItem('admin_ok')==='1') loadAll();
+</script>
+</body>
+</html>
