@@ -587,7 +587,16 @@ nav.solid{background:rgba(8,0,5,.92);backdrop-filter:blur(20px);-webkit-backdrop
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
+/* ════════════════════════════════════════
+   SUPABASE
+════════════════════════════════════════ */
+const _sb=supabase.createClient(
+  'https://yzcaoxdwirgqfycqmiuq.supabase.co',
+  'sb_publishable_aVa081xvLI5_zBYVa2Oz4w_qIFQeeHt'
+);
+
 /* ════════════════════════════════════════
    DATA
 ════════════════════════════════════════ */
@@ -645,7 +654,7 @@ const DEFAULTS={
   adminPassword:"saras2026"
 };
 
-function getData(){
+function getLocalData(){
   try{const s=localStorage.getItem('tacos_saras');if(s)return JSON.parse(s)}catch(e){}
   return DEFAULTS;
 }
@@ -914,19 +923,13 @@ function popupChange(dir,id){
 /* ════════════════════════════════════════
    INIT
 ════════════════════════════════════════ */
-function init(){
-  const d=getData();
-  const r=d.restaurant||DEFAULTS.restaurant;
-  const img=d.images||DEFAULTS.images;
-
+function populatePage(r,img,menu){
   // Hero
   if(r.heroSub) document.getElementById('heroSub').textContent=r.heroSub;
   buildSlideshow(img);
 
   // Nosotros
   document.getElementById('nosImg').src=img.about||DEFAULTS.images.about;
-  document.getElementById('nosTitle').innerHTML=(r.nosTitle||DEFAULTS.restaurant.nosTitle).replace('\n','<br/><span style="color:var(--pink)">').replace(/$/,'</span>');
-  // Fix: split properly
   const nt=r.nosTitle||DEFAULTS.restaurant.nosTitle;
   const parts=nt.split('\n');
   document.getElementById('nosTitle').innerHTML=parts.length>1?`${parts[0]}<br/><span style="color:var(--pink)">${parts[1]}</span>`:nt;
@@ -950,13 +953,35 @@ function init(){
   if(r.whatsapp) document.getElementById('socWa').href='https://wa.me/'+r.whatsapp;
 
   // Menu
-  const menu=(d.menu&&d.menu.length)?d.menu:DEFAULTS.menu;
   renderMenu(menu);
-
-  // Initial card observe
   setTimeout(()=>document.querySelectorAll('#mpanel-birria .mcard').forEach((el,i)=>{
     el.style.transitionDelay=`${i*55}ms`;cardIO.observe(el);
   }),100);
+}
+
+async function init(){
+  let r=DEFAULTS.restaurant, img=DEFAULTS.images, menu=DEFAULTS.menu;
+  try{
+    const [menuRes,cfgRes]=await Promise.all([
+      _sb.from('menu_items').select('*').order('sort_order'),
+      _sb.from('site_config').select('key,value')
+    ]);
+    if(!cfgRes.error&&cfgRes.data?.length){
+      const cfg={};
+      cfgRes.data.forEach(row=>cfg[row.key]=row.value);
+      if(cfg.restaurant) r=cfg.restaurant;
+      if(cfg.images) img=cfg.images;
+    }
+    if(!menuRes.error&&menuRes.data?.length){
+      menu=menuRes.data.map(item=>({...item,desc:item.description}));
+    }
+  }catch(e){
+    const d=getLocalData();
+    r=d.restaurant||DEFAULTS.restaurant;
+    img=d.images||DEFAULTS.images;
+    menu=(d.menu&&d.menu.length)?d.menu:DEFAULTS.menu;
+  }
+  populatePage(r,img,menu);
 }
 
 init();
