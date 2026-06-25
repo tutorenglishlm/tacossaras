@@ -305,6 +305,12 @@ nav.solid{background:rgba(8,0,5,.92);backdrop-filter:blur(20px);-webkit-backdrop
 .ipop-price{font-family:'Paytone One',sans-serif;font-size:1.8rem;color:var(--pink)}
 .ipop-price small{font-family:'Poppins',sans-serif;font-size:.72rem;color:#6B0040;font-weight:400}
 .ipop-emoji{font-size:3.5rem;text-align:center;padding:28px 0 8px;background:var(--cream-2)}
+/* ─── OPTION PILLS ─── */
+.ipop-opts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.opt-pill{padding:8px 18px;border-radius:50px;border:2px solid rgba(200,82,106,.25);background:transparent;color:#6B0040;font-family:'Poppins',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .25s;display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.3}
+.opt-pill:hover{border-color:var(--pink);color:var(--pink)}
+.opt-pill.selected{background:var(--pink);border-color:var(--pink);color:#fff}
+.opt-pill small{font-size:.68rem;opacity:.85}
 
 /* ─── RESPONSIVE ─── */
 @media(max-width:1024px){
@@ -530,14 +536,14 @@ nav.solid{background:rgba(8,0,5,.92);backdrop-filter:blur(20px);-webkit-backdrop
         <p>Estamos en el corazón de Mochicahui, Sinaloa. Pasa a comer birria o pide para llevar — siempre hay birria esperándote.</p>
         <div class="citems">
           <div class="citem"><div class="citem-icon"><i class="fa-solid fa-location-dot"></i></div><div><div class="citem-lbl">Dirección</div><div class="citem-val" id="cAddr">Tomás Rendón 21, Mochicahui<br/>CP 81890, Sinaloa, México</div></div></div>
-          <a href="tel:6682100504" class="citem"><div class="citem-icon"><i class="fa-solid fa-phone"></i></div><div><div class="citem-lbl">Teléfono</div><div class="citem-val" id="cPhone">668 210 0504</div></div></a>
+          <a href="tel:6682100504" class="citem"><div class="citem-icon"><i class="fa-solid fa-phone"></i></div><div><div class="citem-lbl">Teléfono</div><div class="citem-val" id="cPhone">668 103 0323</div></div></a>
           <div class="citem"><div class="citem-icon"><i class="fa-solid fa-clock"></i></div><div><div class="citem-lbl">Horario</div><div class="citem-val" id="cHours">Lun–Dom: 8:00 am – 10:00 pm</div></div></div>
           <div class="citem"><div class="citem-icon"><i class="fa-solid fa-wallet"></i></div><div><div class="citem-lbl">Precio estimado</div><div class="citem-val" id="cPrice">$100 – $200 por persona</div></div></div>
         </div>
         <div class="social-row">
           <a href="https://www.instagram.com/tacossaras/" target="_blank" rel="noopener" class="soc" id="socIg"><i class="fa-brands fa-instagram"></i></a>
           <a href="https://www.facebook.com/profile.php?id=61568119435030" target="_blank" rel="noopener" class="soc" id="socFb"><i class="fa-brands fa-facebook-f"></i></a>
-          <a href="https://wa.me/526682100504" target="_blank" rel="noopener" class="soc" id="socWa"><i class="fa-brands fa-whatsapp"></i></a>
+          <a href="https://wa.me/526681030323" target="_blank" rel="noopener" class="soc" id="socWa"><i class="fa-brands fa-whatsapp"></i></a>
           <a href="tel:6682100504" class="soc"><i class="fa-solid fa-phone"></i></a>
         </div>
       </div>
@@ -613,7 +619,7 @@ const DEFAULTS={
     nosTitle:"Pasión por la birria,\namor por Sinaloa",
     nosText:"En Tacos Sara's nació un sueño sencillo: servir birria artesanal de calidad, preparada con las recetas de siempre y el cariño que solo se consigue en casa. Desde el corazón de Mochicahui, llevamos el sabor auténtico de la birria a cada mesa.",
     address:"Tomás Rendón 21, Mochicahui\nCP 81890, Sinaloa, México",
-    phone:"668 210 0504",whatsapp:"526682100504",
+    phone:"668 103 0323",whatsapp:"526681030323",
     hours:"Lun–Dom: 8:00 am – 10:00 pm",priceRange:"$100 – $200 por persona",
     instagram:"https://www.instagram.com/tacossaras/",
     facebook:"https://www.facebook.com/profile.php?id=61568119435030",
@@ -633,23 +639,28 @@ const DEFAULTS={
     ]
   },
   menu:[
-    {id:"birria-taco",name:"Taco de Birria",desc:"Carne de res cocinada a fuego lento en adobo de chiles guajillo y ancho, servida en tortilla de maíz con cebolla, cilantro y consomé.",price:35,emoji:"🥘",image:"https://images.pexels.com/photos/2092507/pexels-photo-2092507.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"birria",available:true,badge:"⭐ Estrella"},
-    {id:"quesabirria",name:"Quesabirria",desc:"Tortilla dorada con queso oaxaca fundido y birria jugosa. El consomé para taquear no puede faltar.",price:45,emoji:"🧀",image:"https://images.pexels.com/photos/3956439/pexels-photo-3956439.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"birria",available:true,badge:"Favorito"},
-    {id:"consome",name:"Consomé de Birria",desc:"El caldo rojo donde se cuece la birria, con garbanzos, cebolla blanca, cilantro y limón. Pura alma.",price:50,emoji:"🍲",image:"https://images.pexels.com/photos/1731535/pexels-photo-1731535.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"birria",available:true},
-    {id:"tostada",name:"Tostada de Birria",desc:"Tostada crujiente con frijoles, birria deshebrada, crema, queso fresco y salsa roja.",price:38,emoji:"🫓",image:"https://images.pexels.com/photos/4518670/pexels-photo-4518670.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"birria",available:true},
-    {id:"mulita",name:"Mulita de Birria",desc:"Dos tortillas de maíz con queso fundido y birria dentro, doradas en el comal. Consomé para acompañar.",price:48,emoji:"🌮",image:"https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"birria",available:true},
-    {id:"pastor",name:"Taco al Pastor",desc:"Carne marinada del trompo con piña, cebolla y cilantro sobre tortilla de maíz.",price:28,emoji:"🌮",image:"https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"tacos",available:true,badge:"Clásico"},
-    {id:"asada",name:"Taco de Carne Asada",desc:"Res a las brasas con guacamole, cebolla y chile toreado. Sabor intenso y jugoso.",price:35,emoji:"🥩",image:"https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"tacos",available:true},
-    {id:"pollo",name:"Taco de Pollo",desc:"Pollo a la plancha, jugoso y sazonado, con salsas de la casa.",price:28,emoji:"🐔",image:"https://images.pexels.com/photos/2338407/pexels-photo-2338407.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"tacos",available:true},
-    {id:"carnitas",name:"Taco de Carnitas",desc:"Cerdo cocinado a la mexicana — suave, dorado y lleno de sabor.",price:30,emoji:"🐷",image:"https://images.pexels.com/photos/5737254/pexels-photo-5737254.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"tacos",available:true},
-    {id:"jamaica",name:"Agua de Jamaica",desc:"Flor de jamaica preparada artesanalmente. Fría, ligeramente dulce — ideal con la birria.",price:25,emoji:"🌺",image:"https://images.pexels.com/photos/1337825/pexels-photo-1337825.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"bebidas",available:true},
-    {id:"horchata",name:"Agua de Horchata",desc:"Horchata cremosa de arroz con canela. Fría y reconfortante para calmar el picante.",price:25,emoji:"🍚",image:"https://images.pexels.com/photos/5840077/pexels-photo-5840077.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"bebidas",available:true},
-    {id:"limonada",name:"Limonada Natural",desc:"Limonada fresca y natural, perfecta para el calor sinaloense.",price:22,emoji:"🍋",image:"https://images.pexels.com/photos/2109099/pexels-photo-2109099.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"bebidas",available:true},
-    {id:"refresco",name:"Refresco",desc:"Coca-Cola, Pepsi, Jarritos y otras bebidas frías.",price:20,emoji:"🥤",image:"https://images.pexels.com/photos/50593/coca-cola-cold-drink-soft-drink-50593.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"bebidas",available:true},
-    {id:"flan",name:"Flan Casero",desc:"Flan de vainilla preparado en casa, suave y cremoso con su caramelo dorado. El postre clásico mexicano de siempre.",price:35,emoji:"🍮",image:"https://images.pexels.com/photos/8605562/pexels-photo-8605562.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"postres",available:true,badge:"Casero"},
-    {id:"arroz-leche",name:"Arroz con Leche",desc:"Arroz cremoso cocinado con leche, canela y azúcar. Servido frío, una delicia que cierra perfecto la comida.",price:30,emoji:"🍚",image:"https://images.pexels.com/photos/6880219/pexels-photo-6880219.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"postres",available:true},
-    {id:"churros",name:"Churros con Cajeta",desc:"Churros crujientes por fuera, suaves por dentro, bañados en cajeta de leche de cabra. Una tentación irresistible.",price:40,emoji:"🥐",image:"https://images.pexels.com/photos/3026804/pexels-photo-3026804.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"postres",available:true,badge:"Favorito"},
-    {id:"gelatina",name:"Gelatina de Leche",desc:"Gelatina cremosa de leche con rompope, fácil y refrescante. El postre ligero perfecto para el calor de Sinaloa.",price:25,emoji:"🍧",image:"https://images.pexels.com/photos/5966437/pexels-photo-5966437.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"postres",available:true}
+    {id:"quesabirria",name:"Quesabirria",desc:"Tortilla dorada con queso fundido y birria jugosa. Consomé para taquear incluido.",price:45,emoji:"🧀",image:"https://images.pexels.com/photos/3956439/pexels-photo-3956439.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"tacos",available:true,badge:"Favorito",options:[{name:"Maíz",price:45},{name:"Harina",price:50}]},
+    {id:"taco-birria",name:"Taco de Birria",desc:"Carne de res cocinada a fuego lento en adobo de chiles guajillo y ancho, con cebolla, cilantro y consomé.",price:40,emoji:"🌮",image:"https://images.pexels.com/photos/2092507/pexels-photo-2092507.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"tacos",available:true,badge:"⭐ Estrella",options:[{name:"Maíz",price:40},{name:"Harina",price:45}]},
+    {id:"costra-queso",name:"Costra de Queso",desc:"Tortilla con costra de queso dorado y birria jugosa por dentro. Crujiente y llena de sabor.",price:60,emoji:"🧀",image:"https://images.pexels.com/photos/4518670/pexels-photo-4518670.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"tacos",available:true,options:[{name:"Maíz",price:60},{name:"Harina",price:70}]},
+    {id:"birria-caldo",name:"Birria en Caldo",desc:"Birria de res en su caldo rojo con garbanzos, cebolla blanca, cilantro y limón. Pura alma sinaloense.",price:100,emoji:"🍲",image:"https://images.pexels.com/photos/1731535/pexels-photo-1731535.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"birria",available:true,options:[{name:"Orden",price:130},{name:"½ Orden",price:100}]},
+    {id:"birria-dorada",name:"Birria Dorada",desc:"Birria dorada a la perfección — crujiente por fuera, jugosa y llena de sabor por dentro.",price:120,emoji:"🔥",image:"https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"birria",available:true,options:[{name:"Orden",price:150},{name:"½ Orden",price:120}]},
+    {id:"sope",name:"Sope",desc:"Masa de maíz gruesa con birria, frijoles, crema, queso y salsa. Una especialidad de la casa.",price:120,emoji:"🫓",image:"https://images.pexels.com/photos/4518670/pexels-photo-4518670.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"especialidades",available:true},
+    {id:"sa-ramen",name:"Sa-Ramen",desc:"El ramen al estilo Sara's — fideos en consomé de birria con carne, cebolla y especias. Único y adictivo.",price:150,emoji:"🍜",image:"https://images.pexels.com/photos/1731535/pexels-photo-1731535.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"especialidades",available:true,badge:"Especialidad"},
+    {id:"vampibirria",name:"Vampibirria",desc:"Tostada de birria con queso fundido y todos los toppings. El vampiro de los antojitos de Mochicahui.",price:60,emoji:"🧄",image:"https://images.pexels.com/photos/5737244/pexels-photo-5737244.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"especialidades",available:true},
+    {id:"burribirria",name:"Burribirria",desc:"Burrito relleno de birria jugosa con queso, arroz y frijoles. Grande, contundente y delicioso.",price:100,emoji:"🌯",image:"https://images.pexels.com/photos/2092507/pexels-photo-2092507.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"especialidades",available:true},
+    {id:"pellizcadas",name:"Pellizcadas de Asientos",desc:"Masa de maíz pellizcada con asientos de cerdo. Un antojito clásico sinaloense.",price:25,emoji:"🫓",image:"https://images.pexels.com/photos/4110255/pexels-photo-4110255.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"especialidades",available:true},
+    {id:"ref-vidrio",name:"Refresco (vidrio)",desc:"Coca-Cola, Pepsi, Jarritos y otras marcas en botella de vidrio bien fría.",price:30,emoji:"🥤",image:"https://images.pexels.com/photos/50593/coca-cola-cold-drink-soft-drink-50593.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"bebidas",available:true},
+    {id:"ref-600",name:"Refresco 600 ml",desc:"Refresco en botella de 600 ml. Varias marcas disponibles.",price:35,emoji:"🥤",image:"https://images.pexels.com/photos/50593/coca-cola-cold-drink-soft-drink-50593.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"bebidas",available:true},
+    {id:"agua-sabor",name:"Aguas de Sabor",desc:"Jamaica, piña o té. Preparadas artesanalmente, frías y refrescantes para el calor de Sinaloa.",price:25,emoji:"🌺",image:"https://images.pexels.com/photos/1337825/pexels-photo-1337825.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"bebidas",available:true},
+    {id:"agua-medio",name:"Agua Natural ½ lt",desc:"Agua natural embotellada de medio litro. Fresca y pura.",price:20,emoji:"💧",image:"https://images.pexels.com/photos/2109099/pexels-photo-2109099.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"bebidas",available:true},
+    {id:"agua-litro",name:"Agua Natural 1 lt",desc:"Agua natural embotellada de un litro. Perfecta para compartir.",price:30,emoji:"💧",image:"https://images.pexels.com/photos/2109099/pexels-photo-2109099.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"bebidas",available:true},
+    {id:"cafe-soluble",name:"Café Soluble",desc:"Café soluble caliente, perfecto para comenzar la mañana.",price:30,emoji:"☕",image:"https://images.pexels.com/photos/312418/pexels-photo-312418.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"bebidas",available:true},
+    {id:"cafe-colado",name:"Café Colado",desc:"Café de olla colado, aromático y reconfortante. El clásico de las mañanas sinaloenses.",price:50,emoji:"☕",image:"https://images.pexels.com/photos/312418/pexels-photo-312418.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"bebidas",available:true},
+    {id:"pastel-ciruela",name:"Pastel de Ciruela",desc:"Pastel casero de ciruela, húmedo y esponjoso. El postre favorito de la casa.",price:75,emoji:"🍰",image:"https://images.pexels.com/photos/8605562/pexels-photo-8605562.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"postres",available:true},
+    {id:"tres-leches",name:"Pastel 3 Leches",desc:"El clásico pastel de tres leches, cremoso, suave y esponjoso. Hecho en casa con amor.",price:50,emoji:"🎂",image:"https://images.pexels.com/photos/6880219/pexels-photo-6880219.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"postres",available:true,badge:"Casero"},
+    {id:"quesadilla",name:"Quesadilla",desc:"Quesadilla de maíz o harina con queso fundido. El complemento perfecto para tu orden.",price:20,emoji:"🫓",image:"https://images.pexels.com/photos/5737244/pexels-photo-5737244.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"extras",available:true},
+    {id:"tortillas",name:"Tortillas Recién Hechas",desc:"Tortillas de maíz hechas a mano, recién salidas del comal. La unidad.",price:5,emoji:"🫓",image:"https://images.pexels.com/photos/4110255/pexels-photo-4110255.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"extras",available:true},
+    {id:"empaque",name:"Empaque para Llevar",desc:"Empaque para llevar tu pedido cómodamente.",price:10,emoji:"📦",image:"https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg?auto=compress&cs=tinysrgb&w=600&h=450",category:"extras",available:true}
   ],
   adminPassword:"saras2026"
 };
@@ -663,6 +674,13 @@ function getLocalData(){
    PAGE NAVIGATION
 ════════════════════════════════════════ */
 let currentPage='hero';
+let _whatsapp='526681030323';
+let _popupItemId=null;
+let _popupSelectedOption=null;
+
+function getCartKey(id,optName){
+  return optName?id+'__'+optName.replace(/\s+/g,'_'):id;
+}
 function showPage(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
@@ -733,7 +751,7 @@ function goSlide(idx){
    MENU
 ════════════════════════════════════════ */
 let menuMap={};
-const CAT={birria:'🔥 Birria',tacos:'🌮 Tacos',bebidas:'🥤 Bebidas',postres:'🍮 Postres'};
+const CAT={tacos:'🌮 Tacos',birria:'🍲 Birria',especialidades:'⭐ Especialidades',bebidas:'🥤 Bebidas',postres:'🍮 Postres',extras:'➕ Extras'};
 
 function renderMenu(items){
   menuMap={};
@@ -747,8 +765,23 @@ function renderMenu(items){
 }
 
 function cardHTML(it){
-  const q=cart[it.id]?.qty||0;
   const na=it.available===false;
+  const hasOpts=it.options&&it.options.length>0;
+  let priceHtml,footerRight;
+  if(hasOpts){
+    const prices=it.options.map(o=>o.price);
+    const mn=Math.min(...prices),mx=Math.max(...prices);
+    priceHtml=`<div class="mcard-price">${mn===mx?`$${mn}`:`$${mn}<small> – $${mx}</small>`}</div>`;
+    footerRight=`<span style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--pink);display:flex;align-items:center;gap:4px"><i class="fa-solid fa-circle-chevron-right"></i> Elegir</span>`;
+  } else {
+    const q=cart[it.id]?.qty||0;
+    priceHtml=`<div class="mcard-price">$${it.price}<small> c/u</small></div>`;
+    footerRight=`<div class="qty" onclick="event.stopPropagation()">
+      <button class="qty-btn" onclick="change(this,-1,'${it.id}')">−</button>
+      <span class="qty-num">${q}</span>
+      <button class="qty-btn" onclick="change(this,1,'${it.id}')" data-cid="${it.id}">+</button>
+    </div>`;
+  }
   return `<div class="mcard${na?' unavail':''}" style="transition-delay:0ms;cursor:pointer" onclick="openItemPopup('${it.id}')">
     <div class="mcard-photo" style="position:relative">
       ${na?`<span style="position:absolute;top:8px;right:8px;z-index:2;background:rgba(0,0,0,.7);color:#fff;font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:50px">Agotado</span>`:''}
@@ -758,15 +791,8 @@ function cardHTML(it){
     <div class="mcard-body">
       ${it.badge?`<span class="mcard-badge">${it.badge}</span>`:''}
       <div class="mcard-name">${it.name}</div>
-      <p class="mcard-desc">${it.desc}</p>
-      <div class="mcard-footer">
-        <div class="mcard-price">$${it.price}<small> c/u</small></div>
-        <div class="qty" onclick="event.stopPropagation()">
-          <button class="qty-btn" onclick="change(this,-1,'${it.id}')">−</button>
-          <span class="qty-num">${q}</span>
-          <button class="qty-btn" onclick="change(this,1,'${it.id}')" data-cid="${it.id}">+</button>
-        </div>
-      </div>
+      <p class="mcard-desc">${it.desc||''}</p>
+      <div class="mcard-footer">${priceHtml}${footerRight}</div>
     </div>
   </div>`;
 }
@@ -858,8 +884,7 @@ function sendOrder(){
   ni.classList.remove('err');
   const keys=Object.keys(cart);
   if(!keys.length){alert('Agrega al menos un producto.');return}
-  const d=getData();
-  const wp=d.restaurant?.whatsapp||DEFAULTS.restaurant.whatsapp;
+  const wp=_whatsapp;
   let msg=`🌮 *PEDIDO – Tacos Sara's*\n👤 *Nombre:* ${name}\n\n`;
   let tot=0;
   keys.forEach(k=>{const i=cart[k];const sub=i.price*i.qty;msg+=`${i.emoji||'•'} ${i.name} ×${i.qty}  →  *$${sub}*\n`;tot+=sub});
@@ -874,8 +899,13 @@ function sendOrder(){
    ITEM POPUP
 ════════════════════════════════════════ */
 function openItemPopup(id){
+  _popupItemId=id;
   const it=menuMap[id];if(!it)return;
-  const q=cart[id]?.qty||0;
+  const hasOpts=it.options&&it.options.length>0;
+  _popupSelectedOption=hasOpts?it.options[0]:null;
+  const price=_popupSelectedOption?_popupSelectedOption.price:it.price;
+  const cartKey=getCartKey(id,_popupSelectedOption?.name);
+  const q=cart[cartKey]?.qty||0;
   const pop=document.getElementById('ipop');
   pop.innerHTML=`
     <div class="ipop-photo-wrap">
@@ -888,12 +918,17 @@ function openItemPopup(id){
     <div class="ipop-body">
       <div class="ipop-name">${it.name}</div>
       <p class="ipop-desc">${it.desc||'Sin descripción disponible.'}</p>
+      ${hasOpts?`
+        <div style="margin-bottom:16px">
+          <div style="font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(107,0,64,.55);margin-bottom:10px">Elige tu opción:</div>
+          <div class="ipop-opts">${it.options.map(o=>`<button class="opt-pill${_popupSelectedOption?.name===o.name?' selected':''}" data-opt="${o.name}" onclick="selectOption('${o.name}')"><span>${o.name}</span><small>$${o.price}</small></button>`).join('')}</div>
+        </div>`:''}
       <div class="ipop-foot">
-        <div class="ipop-price">$${it.price}<small> c/u</small></div>
+        <div class="ipop-price" id="popupPrice">$${price}<small> c/u</small></div>
         <div class="qty" style="border:2px solid rgba(233,30,140,.25)">
-          <button class="qty-btn" onclick="popupChange(-1,'${id}')">−</button>
+          <button class="qty-btn" onclick="popupChange(-1)">−</button>
           <span class="qty-num" id="popupQty">${q}</span>
-          <button class="qty-btn" onclick="popupChange(1,'${id}')">+</button>
+          <button class="qty-btn" onclick="popupChange(1)">+</button>
         </div>
       </div>
     </div>`;
@@ -902,21 +937,37 @@ function openItemPopup(id){
   document.body.style.overflow='hidden';
 }
 
+function selectOption(name){
+  const it=menuMap[_popupItemId];if(!it)return;
+  _popupSelectedOption=it.options?.find(o=>o.name===name)||null;
+  document.querySelectorAll('.opt-pill').forEach(p=>p.classList.toggle('selected',p.dataset.opt===name));
+  const prEl=document.getElementById('popupPrice');
+  if(prEl&&_popupSelectedOption) prEl.innerHTML='$'+_popupSelectedOption.price+'<small> c/u</small>';
+  const qEl=document.getElementById('popupQty');
+  if(qEl) qEl.textContent=cart[getCartKey(_popupItemId,name)]?.qty||0;
+}
+
 function closeItemPopup(){
   document.getElementById('ipopBg').classList.remove('open');
   document.getElementById('ipop').classList.remove('open');
   document.body.style.overflow='';
 }
 
-function popupChange(dir,id){
-  const item=menuMap[id];if(!item)return;
-  if(!cart[id]) cart[id]={...item,qty:0};
-  cart[id].qty=Math.max(0,cart[id].qty+dir);
-  if(cart[id].qty===0) delete cart[id];
+function popupChange(dir){
+  const id=_popupItemId;
+  const it=menuMap[id];if(!it)return;
+  const price=_popupSelectedOption?_popupSelectedOption.price:it.price;
+  const optKey=getCartKey(id,_popupSelectedOption?.name);
+  const displayName=_popupSelectedOption?it.name+' — '+_popupSelectedOption.name:it.name;
+  if(!cart[optKey]) cart[optKey]={...it,name:displayName,price,qty:0};
+  cart[optKey].qty=Math.max(0,cart[optKey].qty+dir);
+  if(cart[optKey].qty===0) delete cart[optKey];
   const pq=document.getElementById('popupQty');
-  if(pq) pq.textContent=cart[id]?.qty||0;
-  const cardQtyNum=document.querySelector(`[data-cid="${id}"]`)?.closest('.qty')?.querySelector('.qty-num');
-  if(cardQtyNum) cardQtyNum.textContent=cart[id]?.qty||0;
+  if(pq) pq.textContent=cart[optKey]?.qty||0;
+  if(!_popupSelectedOption){
+    const cardQtyNum=document.querySelector('[data-cid="'+id+'"]')?.closest('.qty')?.querySelector('.qty-num');
+    if(cardQtyNum) cardQtyNum.textContent=cart[optKey]?.qty||0;
+  }
   renderCart();
 }
 
@@ -950,11 +1001,12 @@ function populatePage(r,img,menu){
   document.getElementById('cPrice').textContent=r.priceRange||DEFAULTS.restaurant.priceRange;
   if(r.instagram){document.getElementById('socIg').href=r.instagram;document.getElementById('drawerIg').href=r.instagram;document.getElementById('heroIg').href=r.instagram}
   if(r.facebook){document.getElementById('socFb').href=r.facebook;document.getElementById('drawerFb').href=r.facebook;document.getElementById('heroFb').href=r.facebook}
-  if(r.whatsapp) document.getElementById('socWa').href='https://wa.me/'+r.whatsapp;
+  if(r.whatsapp){document.getElementById('socWa').href='https://wa.me/'+r.whatsapp;_whatsapp=r.whatsapp;}
 
   // Menu
   renderMenu(menu);
-  setTimeout(()=>document.querySelectorAll('#mpanel-birria .mcard').forEach((el,i)=>{
+  const firstCat=menu[0]?.category||'quesabirrias';
+  setTimeout(()=>document.querySelectorAll('#mpanel-'+firstCat+' .mcard').forEach((el,i)=>{
     el.style.transitionDelay=`${i*55}ms`;cardIO.observe(el);
   }),100);
 }

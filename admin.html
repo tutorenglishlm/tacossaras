@@ -222,12 +222,14 @@ input,textarea,select{font-family:'Poppins',sans-serif}
         <div class="sec-title">Menú <span>Tacos Sara's</span></div>
         <p class="sec-desc">Agrega, edita o elimina platillos. Activa/desactiva disponibilidad sin borrar el elemento.</p>
         <div class="menu-toolbar">
-          <div class="filter-tabs" id="filterTabs">
+          <div class="filter-tabs" id="filterTabs" style="flex-wrap:wrap">
             <button class="ftab active" data-f="all" onclick="filterItems('all',this)">Todos</button>
-            <button class="ftab" data-f="birria" onclick="filterItems('birria',this)">🔥 Birria</button>
             <button class="ftab" data-f="tacos" onclick="filterItems('tacos',this)">🌮 Tacos</button>
+            <button class="ftab" data-f="birria" onclick="filterItems('birria',this)">🍲 Birria</button>
+            <button class="ftab" data-f="especialidades" onclick="filterItems('especialidades',this)">⭐ Especialidades</button>
             <button class="ftab" data-f="bebidas" onclick="filterItems('bebidas',this)">🥤 Bebidas</button>
             <button class="ftab" data-f="postres" onclick="filterItems('postres',this)">🍮 Postres</button>
+            <button class="ftab" data-f="extras" onclick="filterItems('extras',this)">➕ Extras</button>
           </div>
           <button class="btn-add" onclick="openModal()"><i class="fa-solid fa-plus"></i> Nuevo platillo</button>
         </div>
@@ -270,7 +272,7 @@ input,textarea,select{font-family:'Poppins',sans-serif}
             </div>
             <div class="form-group">
               <label class="form-label">WhatsApp (código país sin +)</label>
-              <input class="form-input" id="inf-whatsapp" type="tel" placeholder="526682100504"/>
+              <input class="form-input" id="inf-whatsapp" type="tel" placeholder="526681030323"/>
               <span class="form-hint">Incluye código de país: 52 para México</span>
             </div>
             <div class="form-group">
@@ -392,10 +394,12 @@ input,textarea,select{font-family:'Poppins',sans-serif}
         <div class="form-group">
           <label class="form-label">Categoría *</label>
           <select class="form-select" id="m-category">
-            <option value="birria">🔥 Especialidades (Birria)</option>
             <option value="tacos">🌮 Tacos</option>
+            <option value="birria">🍲 Birria</option>
+            <option value="especialidades">⭐ Especialidades</option>
             <option value="bebidas">🥤 Bebidas</option>
             <option value="postres">🍮 Postres</option>
+            <option value="extras">➕ Extras</option>
           </select>
         </div>
         <div class="form-group">
@@ -405,6 +409,12 @@ input,textarea,select{font-family:'Poppins',sans-serif}
         <div class="form-group">
           <label class="form-label">Badge (opcional)</label>
           <input class="form-input" id="m-badge" type="text" placeholder="⭐ Estrella, Favorito..."/>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Opciones de precio (ej: Maíz / Harina con precio diferente)</label>
+          <div id="optionsEditor"></div>
+          <button type="button" onclick="addOption()" class="btn-upload" style="margin-top:8px"><i class="fa-solid fa-plus"></i> Agregar opción</button>
+          <span class="form-hint" style="margin-top:6px;display:block">Si hay opciones, el campo "Precio" se ignora y se usa el precio de cada opción.</span>
         </div>
         <div class="form-group full">
           <label class="form-label">Imagen</label>
@@ -494,7 +504,7 @@ const DEFAULTS={
     nosText:"En Tacos Sara's nació un sueño sencillo: servir birria artesanal de calidad con las recetas de siempre y el cariño que solo se consigue en casa. Desde el corazón de Mochicahui, llevamos sabor auténtico a cada mesa.",
     address:"Tomás Rendón 21, Mochicahui\nCP 81890, Sinaloa, México",
     phone:"668 210 0504",
-    whatsapp:"526682100504",
+    whatsapp:"526681030323",
     hours:"Lun–Dom: 8:00 am – 10:00 pm",
     priceRange:"$100 – $200 por persona",
     instagram:"https://www.instagram.com/tacossaras/",
@@ -586,9 +596,10 @@ function renderItemGrid(filter){
         ?`<img class="item-photo" src="${item.image}" alt="${item.name}" onerror="this.style.opacity='.2'"/>`
         :`<div class="item-photo-placeholder">${item.emoji||'🌮'}</div>`}
       <div class="item-body">
-        <div class="item-cat">${{birria:'🔥 Especialidades',tacos:'🌮 Tacos',bebidas:'🥤 Bebidas',postres:'🍮 Postres'}[item.category]||item.category}</div>
+        <div class="item-cat">${{tacos:'🌮 Tacos',birria:'🍲 Birria',especialidades:'⭐ Especialidades',bebidas:'🥤 Bebidas',postres:'🍮 Postres',extras:'➕ Extras'}[item.category]||item.category}</div>
         <div class="item-name">${item.emoji||''} ${item.name}</div>
-        <div class="item-price">$${item.price}</div>
+        <div class="item-price">${item.options&&item.options.length?'$'+Math.min(...item.options.map(o=>o.price))+' – $'+Math.max(...item.options.map(o=>o.price)):'$'+item.price}</div>
+      ${item.options&&item.options.length?`<div style="font-size:.65rem;color:var(--muted);margin-bottom:6px">${item.options.map(o=>o.name+': $'+o.price).join(' · ')}</div>`:''}
         <div class="avail-toggle">
           <label class="toggle">
             <input type="checkbox" ${item.available!==false?'checked':''} onchange="toggleAvail('${item.id}',this.checked)"/>
@@ -635,25 +646,51 @@ function openModal(id){
   document.getElementById('modalTitle').innerHTML=id?`Editar <span>platillo</span>`:`Nuevo <span>platillo</span>`;
   document.getElementById('m-name').value=item?.name||'';
   document.getElementById('m-desc').value=item?.desc||'';
-  document.getElementById('m-price').value=item?.price||'';
-  document.getElementById('m-category').value=item?.category||'birria';
+  document.getElementById('m-price').value=item?.options?.length?'':item?.price||'';
+  document.getElementById('m-category').value=item?.category||'tacos';
   document.getElementById('m-emoji').value=item?.emoji||'';
   document.getElementById('m-badge').value=item?.badge||'';
   document.getElementById('m-image').value=item?.image||'';
   document.getElementById('m-available').checked=item?.available!==false;
+  renderOptions(item?.options||[]);
   const prev=document.getElementById('m-img-prev');
   prev.src=item?.image||''; prev.style.opacity='1';
   document.getElementById('modalBg').classList.add('open');
 }
 
-function closeModal(){document.getElementById('modalBg').classList.remove('open');editingId=null}
+function closeModal(){document.getElementById('modalBg').classList.remove('open');editingId=null;renderOptions([])}
+
+/* ══════ OPTIONS ══════ */
+function renderOptions(opts){
+  document.getElementById('optionsEditor').innerHTML=(opts||[]).map((o,i)=>`
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px" data-oi="${i}">
+      <input class="form-input" id="opt-name-${i}" type="text" value="${o.name||''}" placeholder="Ej: Maíz"/>
+      <input class="form-input" id="opt-price-${i}" type="number" value="${o.price||''}" placeholder="Precio" min="0" step="1" style="width:100px;flex-shrink:0"/>
+      <button type="button" onclick="removeOption(${i})" style="width:34px;height:34px;border-radius:8px;border:none;background:rgba(229,57,53,.08);color:#E53935;cursor:pointer;flex-shrink:0;font-size:.8rem"><i class="fa-solid fa-trash"></i></button>
+    </div>`).join('');
+}
+function collectOptions(){
+  return [...document.querySelectorAll('#optionsEditor [data-oi]')].map(el=>{
+    const i=el.dataset.oi;
+    const name=(document.getElementById('opt-name-'+i)?.value||'').trim();
+    const price=parseFloat(document.getElementById('opt-price-'+i)?.value)||0;
+    return name?{name,price}:null;
+  }).filter(Boolean);
+}
+function addOption(){
+  const opts=collectOptions();opts.push({name:'',price:0});renderOptions(opts);
+  setTimeout(()=>document.getElementById('opt-name-'+(opts.length-1))?.focus(),50);
+}
+function removeOption(i){const opts=collectOptions();opts.splice(i,1);renderOptions(opts);}
 
 async function saveItem(){
   const name=document.getElementById('m-name').value.trim();
   const price=parseFloat(document.getElementById('m-price').value);
   if(!name){document.getElementById('m-name').style.borderColor='#E53935';setTimeout(()=>document.getElementById('m-name').style.borderColor='',1500);return}
-  if(isNaN(price)||price<0){document.getElementById('m-price').style.borderColor='#E53935';setTimeout(()=>document.getElementById('m-price').style.borderColor='',1500);return}
   const desc=document.getElementById('m-desc').value.trim();
+  const opts=collectOptions();
+  const price=opts.length?Math.min(...opts.map(o=>o.price)):parseFloat(document.getElementById('m-price').value)||0;
+  if(!opts.length&&(isNaN(price)||price<0)){document.getElementById('m-price').style.borderColor='#E53935';setTimeout(()=>document.getElementById('m-price').style.borderColor='',1500);return}
   const item={
     id:editingId||('item-'+Date.now()),
     name, description:desc, desc, price,
@@ -662,6 +699,7 @@ async function saveItem(){
     badge:document.getElementById('m-badge').value.trim()||null,
     image:document.getElementById('m-image').value.trim(),
     available:document.getElementById('m-available').checked,
+    options:opts.length?opts:null,
     sort_order:editingId?(DATA.menu.find(i=>i.id===editingId)?.sort_order||0):Date.now()
   };
   // Update local state
@@ -672,7 +710,7 @@ async function saveItem(){
     const{error}=await _sb.from('menu_items').upsert({
       id:item.id,name:item.name,description:item.description,price:item.price,
       category:item.category,emoji:item.emoji,badge:item.badge,image:item.image,
-      available:item.available,sort_order:item.sort_order
+      available:item.available,sort_order:item.sort_order,options:item.options
     });
     if(error) throw error;
   }catch(e){showToast('Error guardando en la nube','red');}
